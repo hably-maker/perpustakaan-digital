@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Peminjaman Buku Perpustakaan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sidebar {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-dipinjam {
+            background-color: #ffeaa7;
+            color: #e17055;
+        }
+
+        .status-dikembalikan {
+            background-color: #55efc4;
+            color: #00b894;
+        }
+
+        .action-buttons button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .btn-edit {
+            background-color: #f39c12;
+        }
+
+        .btn-edit:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-delete {
+            background-color: #e74c3c;
+        }
+
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-kembalikan {
+            background-color: #27ae60;
+        }
+
+        .btn-kembalikan:hover {
+            background-color: #219653;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 10px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>Perpustakaan Digital</h1>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active">Daftar Peminjaman</a></li>
+                        <li><a href="#">Data Buku</a></li>
+                        <li><a href="#">Anggota</a></li>
+                        <li><a href="#">Laporan</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <aside class="sidebar">
+                <h2>Tambah Peminjaman</h2>
+                <form id="form-peminjaman">
+                    <div class="form-group">
+                        <label for="nama-peminjam">Nama Peminjam</label>
+                        <input type="text" id="nama-peminjam" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="judul-buku">Judul Buku</label>
+                        <input type="text" id="judul-buku" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal-pinjam">Tanggal Pinjam</label>
+                        <input type="date" id="tanggal-pinjam" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal-kembali">Tanggal Kembali</label>
+                        <input type="date" id="tanggal-kembali" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status">
+                            <option value="dipinjam">Dipinjam</option>
+                            <option value="dikembalikan">Dikembalikan</option>
+                        </select>
+                    </div>
+                    <button type="submit">Tambah Peminjaman</button>
+                </form>
+            </aside>
+
+            <main class="content">
+                <h2>Daftar Peminjaman Buku</h2>
+                <table id="tabel-peminjaman">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Peminjam</th>
+                            <th>Judul Buku</th>
+                            <th>Tanggal Pinjam</th>
+                            <th>Tanggal Kembali</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="daftar-peminjaman">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </main>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Perpustakaan Digital. Semua hak dilindungi.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data contoh peminjaman
+        let daftarPeminjaman = [
+            {
+                id: 1,
+                namaPeminjam: "Ahmad Rizki",
+                judulBuku: "Pemrograman JavaScript",
+                tanggalPinjam: "2023-10-01",
+                tanggalKembali: "2023-10-15",
+                status: "dipinjam"
+            },
+            {
+                id: 2,
+                namaPeminjam: "Siti Nurhaliza",
+                judulBuku: "Desain Web Modern",
+                tanggalPinjam: "2023-10-05",
+                tanggalKembali: "2023-10-19",
+                status: "dipinjam"
+            },
+            {
+                id: 3,
+                namaPeminjam: "Budi Santoso",
+                judulBuku: "Database Management",
+                tanggalPinjam: "2023-09-20",
+                tanggalKembali: "2023-10-04",
+                status: "dikembalikan"
+            }
+        ];
+
+        // Fungsi untuk menampilkan daftar peminjaman
+        function tampilkanDaftarPeminjaman() {
+            const tbody = document.getElementById('daftar-peminjaman');
+            tbody.innerHTML = '';
+
+            daftarPeminjaman.forEach((peminjaman, index) => {
+                const row = document.createElement('tr');
+                
+                // Format status
+                const statusClass = peminjaman.status === 'dipinjam' ? 'status-dipinjam' : 'status-dikembalikan';
+                const statusText = peminjaman.status === 'dipinjam' ? 'Dipinjam' : 'Dikembalikan';
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${peminjaman.namaPeminjam}</td>
+                    <td>${peminjaman.judulBuku}</td>
+                    <td>${formatTanggal(peminjaman.tanggalPinjam)}</td>
+                    <td>${formatTanggal(peminjaman.tanggalKembali)}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td class="action-buttons">
+                        ${peminjaman.status === 'dipinjam' ? 
+                            `<button class="btn-kembalikan" onclick="kembalikanBuku(${peminjaman.id})">Kembalikan</button>` : 
+                            ''
+                        }
+                        <button class="btn-edit" onclick="editPeminjaman(${peminjaman.id})">Edit</button>
+                        <button class="btn-delete" onclick="hapusPeminjaman(${peminjaman.id})">Hapus</button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Fungsi untuk memformat tanggal
+        function formatTanggal(tanggal) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(tanggal).toLocaleDateString('id-ID', options);
+        }
+
+        // Fungsi untuk menambahkan peminjaman baru
+        document.getElementById('form-peminjaman').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const namaPeminjam = document.getElementById('nama-peminjam').value;
+            const judulBuku = document.getElementById('judul-buku').value;
+            const tanggalPinjam = document.getElementById('tanggal-pinjam').value;
+            const tanggalKembali = document.getElementById('tanggal-kembali').value;
+            const status = document.getElementById('status').value;
+            
+            // Generate ID baru
+            const idBaru = daftarPeminjaman.length > 0 ? 
+                Math.max(...daftarPeminjaman.map(p => p.id)) + 1 : 1;
+            
+            // Tambahkan ke array
+            daftarPeminjaman.push({
+                id: idBaru,
+                namaPeminjam,
+                judulBuku,
+                tanggalPinjam,
+                tanggalKembali,
+                status
+            });
+            
+            // Reset form
+            document.getElementById('form-peminjaman').reset();
+            
+            // Tampilkan ulang daftar
+            tampilkanDaftarPeminjaman();
+            
+            alert('Peminjaman berhasil ditambahkan!');
+        });
+
+        // Fungsi untuk mengembalikan buku
+        function kembalikanBuku(id) {
+            const index = daftarPeminjaman.findIndex(p => p.id === id);
+            if (index !== -1) {
+                daftarPeminjaman[index].status = 'dikembalikan';
+                tampilkanDaftarPeminjaman();
+                alert('Buku berhasil dikembalikan!');
+            }
+        }
+
+        // Fungsi untuk mengedit peminjaman
+        function editPeminjaman(id) {
+            const peminjaman = daftarPeminjaman.find(p => p.id === id);
+            if (peminjaman) {
+                document.getElementById('nama-peminjam').value = peminjaman.namaPeminjam;
+                document.getElementById('judul-buku').value = peminjaman.judulBuku;
+                document.getElementById('tanggal-pinjam').value = peminjaman.tanggalPinjam;
+                document.getElementById('tanggal-kembali').value = peminjaman.tanggalKembali;
+                document.getElementById('status').value = peminjaman.status;
+                
+                // Hapus data lama
+                hapusPeminjaman(id);
+                
+                alert('Data peminjaman telah dimuat ke form. Silakan perbarui dan tambahkan kembali.');
+            }
+        }
+
+        // Fungsi untuk menghapus peminjaman
+        function hapusPeminjaman(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus data peminjaman ini?')) {
+                daftarPeminjaman = daftarPeminjaman.filter(p => p.id !== id);
+                tampilkanDaftarPeminjaman();
+                alert('Data peminjaman berhasil dihapus!');
+            }
+        }
+
+        // Inisialisasi tampilan saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set tanggal default untuk form
+            const today = new Date();
+            const nextWeek = new Date(today);
+            nextWeek.setDate(today.getDate() + 14); // Default 2 minggu
+            
+            document.getElementById('tanggal-pinjam').valueAsDate = today;
+            document.getElementById('tanggal-kembali').valueAsDate = nextWeek;
+            
+            // Tampilkan daftar peminjaman
+            tampilkanDaftarPeminjaman();
+        });
+    </script>
+</body>
+</html>
